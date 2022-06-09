@@ -1,0 +1,85 @@
+{
+    "id": "22",
+    "nombre": "Videovigilancia",
+    "nivel": "1",
+    "origen": [],
+    "subcategorias": [
+        {
+            "id": "206",
+            "nombre": "Cables y Conectores",
+            "nivel": "2"
+        },
+        {
+            "id": "208",
+            "nombre": "Energía",
+            "nivel": "2"
+        },
+        {
+            "id": "214",
+            "nombre": "Cámaras IP y NVRs",
+            "nivel": "2"
+        },
+        {
+            "id": "218",
+            "nombre": "Accesorios Generales",
+            "nivel": "2"
+        },
+        {
+            "id": "219",
+            "nombre": "Kits- Sistemas Completos",
+            "nivel": "2"
+        },
+        {
+            "id": "226",
+            "nombre": "Videoporteros e Interfonos",
+            "nivel": "2"
+        },
+        {
+            "id": "476",
+            "nombre": "Cámaras y DVRs HD TurboHD / AHD / HD-TVI",
+            "nivel": "2"
+        },
+        {
+            "id": "519",
+            "nombre": "Protección Contra Descargas",
+            "nivel": "2"
+        },
+        {
+            "id": "525",
+            "nombre": "Videograbadoras Móviles y Portátiles",
+            "nivel": "2"
+        },
+        {
+            "id": "65963",
+            "nombre": "Servidores / Almacenamiento",
+            "nivel": "2"
+        },
+        {
+            "id": "65968",
+            "nombre": "Monitores Pantallas y Mobiliario",
+            "nivel": "2"
+        },
+        {
+            "id": "65982",
+            "nombre": "Software CMS / VMS / Hosting",
+            "nivel": "2"
+        },
+        {
+            "id": "65994",
+            "nombre": "Videoanálisis ",
+            "nivel": "2"
+        },
+        {
+            "id": "66195",
+            "nombre": "Herramientas",
+            "nivel": "2"
+        },
+        {
+            "id": "66289",
+            "nombre": "Aeronaves No Tripuladas",
+            "nivel": "2"
+        }
+    ]
+}
+
+
