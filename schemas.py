@@ -24,5 +24,25 @@ class Customers(BaseModel):
     class Config:
         orm_mode = True
 
-    
+class Categories(BaseModel):
+    id: int
+    name:str
+    level:str
+
+class Products(BaseModel):
+    product_id: int
+    description: str
+    sku: str
+    suggested_price: float
+    partner_price: float
+    current_stock: int
+    stock_lastupdate: datetime
+    tax_code: str
+    tax_unit_code: str
+    wv_ratio: str
+    weight: str
+    length: str
+    width: str
+    height: str
+    brit_unit: bool
     
