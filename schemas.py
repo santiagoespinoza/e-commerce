@@ -1,5 +1,7 @@
+#from this import s
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class Password(BaseModel):
     pwd_id: int
@@ -11,18 +13,24 @@ class Password(BaseModel):
     class Config:
         orm_mode = True
 
-class Customers(BaseModel):
+class Users(BaseModel):
     id: int
     first_name: str
     last_name: str
     email: str
-    dob: datetime
-    phone: str
-    pwd: str
-    created_on: datetime
+    user_name: str
+    password: str
+    hashed_password: str
+    street: str
+    city: str
+    state: str
+    postal_code: str
+    billing_address: bool
+    shipping_address: bool
+    card_num1: str
+    card_num2: Optional[str]=None
+    card_num3: Optional[str]=None
 
-    class Config:
-        orm_mode = True
 
 class Categories(BaseModel):
     id: int
@@ -45,4 +53,7 @@ class Products(BaseModel):
     width: str
     height: str
     brit_unit: bool
+    cat1: str
+    cat2: str
+    cat3: str
     
