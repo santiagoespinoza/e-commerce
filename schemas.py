@@ -27,12 +27,6 @@ class Categories(BaseModel):
     name:str
     level:str
 
-class Passwords(BaseModel):
-    pwd_id = int
-    customer_id = int
-    pwd = str
-    active = bool
-    created_on = datetime
 
 class Products(BaseModel):
     product_id: int
@@ -53,6 +47,21 @@ class Products(BaseModel):
     cat1: str
     cat2: str
     cat3: str
+
+class Passwords(BaseModel):
+    pwd_id = int
+    customer_id = int
+    pwd = str
+    active = bool
+    created_on = datetime
+
+class Customers(BaseModel):
+    customer_id: int
+    first_name: str
+    last_name: str
+    email: str
+    dob: datetime
+    phone: str
+    pwd: str
+    created_on: datetime
     
-    class Config:
-        orm_mode = True

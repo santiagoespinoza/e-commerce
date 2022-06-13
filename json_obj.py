@@ -1,8 +1,9 @@
 import json
-from tkinter import N
-import pandas as pd
 from datetime import datetime
-from schemas import Products, Users, Categories
+from schemas import Products, Customers, Categories
+from database import SessionLocal
+import models as mo
+import random
 
 with open("./Data/Hikvision_products.json", encoding="utf8") as data_file:
     data = json.load(data_file)
@@ -10,7 +11,7 @@ with open("./Data/Hikvision_products.json", encoding="utf8") as data_file:
 products = []
 for i in range(len(data)):
     for j in range(len(data[i]['productos'])):
-        dct = data[0]['productos'][j]
+        dct = data[i]['productos'][j]
         p = Products(product_id = dct['producto_id'], description=dct['descripcion'], sku = dct['total_existencia'],
                     suggested_price = dct['precios']['precio_1'], partner_price = dct['precios']['precio_especial'],
                     current_stock = dct['existencia']['nuevo'], stock_lastupdate = datetime.utcnow(), tax_code = dct['sat_key'],
@@ -19,19 +20,49 @@ for i in range(len(data)):
                     cat1 = dct['categorias'][2]['nombre'], cat2 = dct['categorias'][1]['nombre'], cat3 = dct['categorias'][0]['nombre'])
         products.append(p)
 
+print(len(products))
+
+session = SessionLocal()
+session.query(mo.Products).delete()
+
+# We fill products table
+for i in range(len(products)):
+    row = products[i]
+
+    tmp = mo.Products(
+        product_id = row.product_id,
+        description = row.description,
+        sku = row.sku,
+        suggested_price = row.suggested_price,
+        partner_price = row.partner_price,
+        current_stock = row.current_stock,
+        stock_lastupdate = row.stock_lastupdate,
+        tax_code = row.tax_code,
+        tax_unit_code = row.tax_unit_code,
+        wv_ratio = row.wv_ratio,
+        weight = row.weight,
+        length = row.length,
+        width = row.width,
+        height = row.height,
+        brit_unit = row.brit_unit,
+        cat1 = row.cat1,
+        cat2 = row.cat2,
+        cat3 = row.cat3
+    )
+    session.add(tmp)
+    session.commit()
+
 with open("./Data/ecommerce_users.json", encoding="utf8") as data_file:
     user_data = json.load(data_file)
 
-users = []
 for i in range(len(user_data)):
     dct = user_data[i]
-    u = Users(id = dct['id'], first_name = dct['first_name'], last_name = dct['last_name'], 
-            email = dct['email'], user_name = dct['user_name'], password = dct['password'],
-            hashed_password = dct['hashed_password'], street = dct['street'], city = dct['city'], 
-            state = dct['state'], postal_code = dct['postal_code'], billing_address=dct['billing_address'],
-            shipping_address=dct['shipping_address'], card_num1=dct['card_number_1'], card_num2=dct['card_number_2'], 
-            card_num3=dct['card_number_3'])
-    users.append(u)
+    phone_num = ''.join([str(random.randint(1, 10)) for _ in range(9)])
+    u = mo.Customers(
+        customer_id=dct['id'], first_name = dct['first_name'], last_name = dct['last_name'], dob=random.randrange(18, 80),
+            email = dct['email'], user_name = dct['user_name'], pwd = dct['password'], created_on=datetime.utcnow(),phone = phone_num)
+    session.add(u)
+    session.commit()
 
 
 with open("./Data/Categories.json", encoding = "utf8") as data_file:
@@ -42,3 +73,4 @@ for i in range(len(cat_data['subcategorias'])):
     dct = cat_data['subcategorias'][0]
     c = Categories(id=dct['id'], name=dct['nombre'], level=dct['nivel'])
     categories.append(c)
+
