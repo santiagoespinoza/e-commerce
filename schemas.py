@@ -3,16 +3,6 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
-class Password(BaseModel):
-    pwd_id: int
-    customer_id: int
-    pwd: str
-    active: bool
-    created_on: datetime
-
-    class Config:
-        orm_mode = True
-
 class Users(BaseModel):
     id: int
     first_name: str
@@ -37,6 +27,13 @@ class Categories(BaseModel):
     name:str
     level:str
 
+class Passwords(BaseModel):
+    pwd_id = int
+    customer_id = int
+    pwd = str
+    active = bool
+    created_on = datetime
+
 class Products(BaseModel):
     product_id: int
     description: str
@@ -57,3 +54,5 @@ class Products(BaseModel):
     cat2: str
     cat3: str
     
+    class Config:
+        orm_mode = True
