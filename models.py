@@ -19,13 +19,13 @@ class Passwords(Base):
 
 class Customers(Base):
     __tablename__ = 'customers'
-    customer_id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True)
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
-    dob = Column(DateTime)
-    phone = Column(String)
-    pwd = Column(String)
+    #dob = Column(DateTime)
+    #phone = Column(String)
+    password = Column(String)
 
     #password = relationship('Passwords', backref = 'customers')
 

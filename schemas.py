@@ -1,7 +1,9 @@
 #from this import s
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
+import random
+from dateutil.relativedelta import relativedelta
 
 class Users(BaseModel):
     id: int
@@ -56,12 +58,12 @@ class Passwords(BaseModel):
     created_on = datetime
 
 class Customers(BaseModel):
-    customer_id: int
+    id: int
     first_name: str
     last_name: str
     email: str
-    dob: datetime
-    phone: str
-    pwd: str
-    created_on: datetime
+    #phone: int = Field(default_factory=(random.randint(1, 10) for _ in range(9)))
+    #dob: datetime = Field(default_factory = datetime.utcnow() - relativedelta(years=random.randrange(18,80),months = random.randrange(1,12),days = random.randrange(0,365)))
+    password: str
+    #created_on: datetime = Field(default_factory = datetime.utcnow())
     
