@@ -1,28 +1,31 @@
 from psycopg2 import IntegrityError
 from pydantic import BaseModel
 import json
-from database import SessionLocal
-from typing import List, Optional
-from schemas import Customers, Products
-import models as mo
+import random
 from datetime import datetime
-
-session = SessionLocal() # We start a session
-# We delete table data
-session.query(mo.Customers).delete()
-session.query(mo.Products).delete()
+from typing import List, Optional
+from dateutil.relativedelta import relativedelta
+import schemas as sc
 
 # Loading customer data and creating pydantic instances
+customers = []
 with open("./Data/ecommerce_users.json", encoding="utf8") as data_file:
     data = json.load(data_file)
-    customers: List[Customers] = [Customers(**item) for item in data]
+    for i in range(len(data)):
+        user = data[i]
+        date_of_birth = datetime.utcnow() - relativedelta(years=random.randrange(18,80),months = random.randrange(1,12),days = random.randrange(0,365))
+        u = sc.Customers(
+            id = user['id'],
+            first_name = user['first_name'],
+            last_name = user['last_name'],
+            email = user['email'],
+            dob = date_of_birth,
+            phone = ''.join([str(random.randint(1, 9)) for _ in range(10)]),
+            password= user['password'],
+            created_on = datetime.utcnow()
+        )
+        customers.append(u)
 
-# upoading customer data to the sql database
-for i in range(len(customers)):
-    row_cust = customers[i]
-    tmp_cust = mo.Customers(**dict(row_cust))
-    session.add(tmp_cust)
-    session.commit()
 
 # Creating pydantic model with product data
 products = []
@@ -31,7 +34,7 @@ with open("./Data/Hikvision_products.json",encoding="utf8") as prod_file:
     for i in range(len(prod_data)):
         for j in range(len(prod_data[i]['productos'])):
             dct = prod_data[i]['productos'][j]
-            p = Products(
+            p = sc.Products(
                 product_id = dct['producto_id'], 
                 description=dct['descripcion'], 
                 sku = dct['total_existencia'],
@@ -52,19 +55,3 @@ with open("./Data/Hikvision_products.json",encoding="utf8") as prod_file:
                 cat3 = dct['categorias'][0]['nombre']
             )
             products.append(p)
-
-# uploading data to the sql database
-for i in range(len(products)):
-    row = products[i]
-    try:
-        tmp = mo.Products(**dict(row))
-        session.add(tmp)
-    except IntegrityError as e:
-        pass
-    finally:
-        session.commit()
-
-
-
-
-

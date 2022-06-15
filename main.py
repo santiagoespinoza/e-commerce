@@ -1,11 +1,9 @@
-from typing import List
-from typing import List
-from fastapi import FastAPI, status
-from numpy import product
+from fastapi import FastAPI, status, HTTPException
 from database import SessionLocal
 import models
 import schemas as sc
-from sqlalchemy import and_
+from val import customers, products
+from sqlalchemy import and_ 
 
 app = FastAPI()
 db = SessionLocal()
@@ -40,10 +38,14 @@ def create_product(prod:sc.Products):
 # Register new user
 @app.post('/Users/Register')
 def register_user(user:sc.Customers):
+    # Check if email is being used already
+    if (any(customers[i].email==user.email for i in range(len(customers)))):
+        raise HTTPException(status_code=400, detail = 'Email already registered')
     new_user = models.Customers(**dict(user))
 
+    customers.append(user)
     db.add(new_user)
-    db.commit
+    db.commit()
 
     return user
 

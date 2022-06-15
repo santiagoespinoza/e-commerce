@@ -1,33 +1,18 @@
 #from this import s
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from typing import Optional
 import random
 from dateutil.relativedelta import relativedelta
 
-class Users(BaseModel):
-    id: int
-    first_name: str
-    last_name: str
-    email: str
-    user_name: str
-    password: str
-    hashed_password: str
-    street: str
-    city: str
-    state: str
-    postal_code: str
-    billing_address: bool
-    shipping_address: bool
-    card_num1: str
-    card_num2: Optional[str]=None
-    card_num3: Optional[str]=None
+class TaxCodeFormatError(Exception):
+    ''' Custom error that is raised when a tax code doesn't have the right format'''
+    
+    def __init__(self, value: str, message: str)-> None:
+        self.value = value
+        self.message = message
+        super().__init__(message)
 
-
-class Categories(BaseModel):
-    id: int
-    name:str
-    level:str
 
 
 class Products(BaseModel):
@@ -50,6 +35,28 @@ class Products(BaseModel):
     cat2: str
     cat3: str
 
+    @validator("tax_code")
+    @classmethod
+    def valid_tax_code(cls, val):
+        '''Validator to check if tax code is valid.'''
+
+        chars = [c for c in val if c in "0123456789"]
+        if val.isdecimal() != True:
+            raise TaxCodeFormatError(value=val, message="Tax code should contain numbers only.")
+        if len(val)!= 8:
+            raise TaxCodeFormatError(value=val,message="Tax code should be 8 digits long")
+        return val
+
+class Customers(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+    dob: datetime
+    phone: str
+    password: str
+    created_on: datetime
+    
 class Passwords(BaseModel):
     pwd_id = int
     customer_id = int
@@ -57,13 +64,5 @@ class Passwords(BaseModel):
     active = bool
     created_on = datetime
 
-class Customers(BaseModel):
-    id: int
-    first_name: str
-    last_name: str
-    email: str
-    #phone: int = Field(default_factory=(random.randint(1, 10) for _ in range(9)))
-    #dob: datetime = Field(default_factory = datetime.utcnow() - relativedelta(years=random.randrange(18,80),months = random.randrange(1,12),days = random.randrange(0,365)))
-    password: str
-    #created_on: datetime = Field(default_factory = datetime.utcnow())
+
     
