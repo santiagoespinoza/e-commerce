@@ -1,9 +1,6 @@
-from psycopg2 import IntegrityError
-from pydantic import BaseModel
 import json
 import random
 from datetime import datetime
-from typing import List, Optional
 from dateutil.relativedelta import relativedelta
 import schemas as sc
 

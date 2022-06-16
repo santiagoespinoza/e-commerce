@@ -1,7 +1,6 @@
 from database import SessionLocal
 from val import customers, products
 import models as mo
-from psycopg2 import IntegrityError
 
 session = SessionLocal() # We start a session
 # We delete table data
@@ -15,13 +14,9 @@ for i in range(len(customers)):
     session.add(tmp_cust)
     session.commit()
 
-    # uploading data to the sql database
+# uploading data to the sql database
 for i in range(len(products)):
     row = products[i]
-    try:
-        tmp = mo.Products(**dict(row))
-        session.add(tmp)
-    except IntegrityError as e:
-        pass
-    finally:
-        session.commit()
+    tmp = mo.Products(**dict(row))
+    session.add(tmp)
+    session.commit()

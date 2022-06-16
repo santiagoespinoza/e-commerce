@@ -1,8 +1,7 @@
 #from this import s
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator, root_validator
 from datetime import datetime
-from typing import Optional
-import random
+from typing import Iterable
 from dateutil.relativedelta import relativedelta
 
 class TaxCodeFormatError(Exception):
@@ -42,9 +41,9 @@ class Products(BaseModel):
 
         chars = [c for c in val if c in "0123456789"]
         if val.isdecimal() != True:
-            raise TaxCodeFormatError(value=val, message="Tax code should contain numbers only.")
+            raise ValueError("Tax code should contain numbers only.")
         if len(val)!= 8:
-            raise TaxCodeFormatError(value=val,message="Tax code should be 8 digits long")
+            raise ValueError("Tax code should be 8 digits long")
         return val
 
 class Customers(BaseModel):
@@ -56,6 +55,7 @@ class Customers(BaseModel):
     phone: str
     password: str
     created_on: datetime
+
     
 class Passwords(BaseModel):
     pwd_id = int

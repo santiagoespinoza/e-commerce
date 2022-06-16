@@ -1,4 +1,7 @@
+from urllib.request import Request
+from django.http import JsonResponse
 from fastapi import FastAPI, status, HTTPException
+from fastapi.responses import JSONResponse
 from database import SessionLocal
 import models
 import schemas as sc
@@ -7,6 +10,12 @@ from sqlalchemy import and_
 
 app = FastAPI()
 db = SessionLocal()
+
+@app.exception_handler(ValueError)
+async def value_error_exception_handler(request: Request, exc, ValueError):
+    return JSONResponse(
+        content={"message":str(exc)}
+    )
 
 @app.get('/', status_code=200)
 def get_product():
@@ -28,11 +37,12 @@ def get_cat(cat:str, id: int):
 # Create item and upload it to the database
 @app.post('/Products/', status_code=200)
 def create_product(prod:sc.Products):
-    new_prod = models.Products(**dict(prod))
-
-    db.add(new_prod)
-    db.commit()
-
+    try:
+        new_prod = models.Products(**dict(prod))
+        db.add(new_prod)
+        db.commit()
+    except sc.TaxCodeFormatError as e:
+        raise HTTPException(status_code=400, detail = e.message)
     return prod
 
 # Register new user
@@ -40,7 +50,7 @@ def create_product(prod:sc.Products):
 def register_user(user:sc.Customers):
     # Check if email is being used already
     if (any(customers[i].email==user.email for i in range(len(customers)))):
-        raise HTTPException(status_code=400, detail = 'Email already registered')
+        raise HTTPException(status_code=400, detail = 'Email already in use')
     new_user = models.Customers(**dict(user))
 
     customers.append(user)
