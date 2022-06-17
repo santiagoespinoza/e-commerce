@@ -1,7 +1,6 @@
 #from this import s
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, validator, Field
 from datetime import datetime
-from typing import Iterable
 from dateutil.relativedelta import relativedelta
 
 class TaxCodeFormatError(Exception):
@@ -50,7 +49,7 @@ class Customers(BaseModel):
     id: int
     first_name: str
     last_name: str
-    email: str
+    email: str = Field(unique=True)
     dob: datetime
     phone: str
     password: str

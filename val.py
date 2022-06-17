@@ -26,29 +26,37 @@ with open("./Data/ecommerce_users.json", encoding="utf8") as data_file:
 
 # Creating pydantic model with product data
 products = []
+unique = []
 with open("./Data/Hikvision_products.json",encoding="utf8") as prod_file:
     prod_data = json.load(prod_file)
-    for i in range(len(prod_data)):
-        for j in range(len(prod_data[i]['productos'])):
-            dct = prod_data[i]['productos'][j]
-            p = sc.Products(
-                product_id = dct['producto_id'], 
-                description=dct['descripcion'], 
-                sku = dct['total_existencia'],
-                suggested_price = dct['precios']['precio_1'],
-                partner_price = dct['precios']['precio_especial'],
-                current_stock = dct['existencia']['nuevo'],
-                stock_lastupdate = datetime.utcnow(),
-                tax_code = dct['sat_key'],
-                tax_unit_code = dct['unidad_de_medida']['clave_unidad_sat'],
-                wv_ratio = dct['pvol'],
-                weight = dct['peso'],
-                length = dct['largo'], 
-                width = dct['ancho'],
-                height = dct['alto'],
-                brit_unit = dct['unidad_de_medida']['codigo_unidad'],
-                cat1 = dct['categorias'][2]['nombre'],
-                cat2 = dct['categorias'][1]['nombre'],
-                cat3 = dct['categorias'][0]['nombre']
-            )
-            products.append(p)
+
+    # We remove duplicate entries
+    for i in prod_data:
+        if i not in unique:
+            unique.append(i)
+
+for i in range(len(unique)):
+    for j in range(len(unique[i]['productos'])):
+        dct = unique[i]['productos'][j]
+        p = sc.Products(
+            product_id = dct['producto_id'], 
+            description=dct['descripcion'], 
+            sku = dct['total_existencia'],
+            suggested_price = dct['precios']['precio_1'],
+            partner_price = dct['precios']['precio_especial'],
+            current_stock = dct['existencia']['nuevo'],
+            stock_lastupdate = datetime.utcnow(),
+            tax_code = dct['sat_key'],
+            tax_unit_code = dct['unidad_de_medida']['clave_unidad_sat'],
+            wv_ratio = dct['pvol'],
+            weight = dct['peso'],
+            length = dct['largo'], 
+            width = dct['ancho'],
+            height = dct['alto'],
+            brit_unit = dct['unidad_de_medida']['codigo_unidad'],
+            cat1 = dct['categorias'][2]['nombre'],
+            cat2 = dct['categorias'][1]['nombre'],
+            cat3 = dct['categorias'][0]['nombre']
+        )
+        products.append(p)
+
