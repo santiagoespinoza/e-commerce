@@ -13,10 +13,8 @@ class Customers(Base):
     email = Column(String)
     dob = Column(DateTime)
     phone = Column(String)
-    password = Column(String, ForeignKey('passwords.pwd'))
+    password = Column(String)
     created_on = Column(DateTime,default=datetime.now)
-
-    pwrd = relationship("Passwords", backref="customers")
 
 class Passwords(Base):
     __tablename__ = 'passwords'
