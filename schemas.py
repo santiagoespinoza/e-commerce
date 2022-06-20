@@ -1,17 +1,6 @@
-#from this import s
 from pydantic import BaseModel, validator, Field
+from typing import Optional
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
-class TaxCodeFormatError(Exception):
-    ''' Custom error that is raised when a tax code doesn't have the right format'''
-    
-    def __init__(self, value: str, message: str)-> None:
-        self.value = value
-        self.message = message
-        super().__init__(message)
-
-
 
 class Products(BaseModel):
     product_id: int
@@ -52,16 +41,42 @@ class Customers(BaseModel):
     email: str = Field(unique=True)
     dob: datetime
     phone: str
-    password: str
     created_on: datetime
-
     
 class Passwords(BaseModel):
-    pwd_id = int
-    customer_id = int
-    pwd = str
-    active = bool
-    created_on = datetime
+    pwd_id: int
+    pwd: str
+    active: bool
+    created_on: datetime
+
+class Addresses(BaseModel):
+    id: int
+    street: str
+    street_num: str
+    street_ext: Optional[str]=None
+    city: str
+    state: str
+    postal_code: str
+    billing_address: bool
+    shipping_address: bool
+
+class Payment(BaseModel):
+    id: int
+    card_num: str
+    current: bool
+
+    @validator("card_num")
+    @classmethod
+    def validate_card_num(cls, val):
+        ''' Validator to check if card number is valid'''
+        chars = [c for c in val if c in "0123456789"]
+
+        if val.isdecimal() != True:
+            raise ValueError("Card number should contain numbers only.")
+        if len(val)!=16:
+            raise ValueError("Card Number should be 16 digits long")
+        return val
+        
 
 
     

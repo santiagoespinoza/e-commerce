@@ -1,5 +1,6 @@
 import json
 import random
+import re
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import schemas as sc
@@ -18,7 +19,6 @@ with open("./Data/ecommerce_users.json", encoding="utf8") as data_file:
             email = user['email'],
             dob = date_of_birth,
             phone = ''.join([str(random.randint(1, 9)) for _ in range(10)]),
-            password= user['password'],
             created_on = datetime.utcnow()
         )
         customers.append(u)
@@ -60,3 +60,42 @@ for i in range(len(unique)):
         )
         products.append(p)
 
+passwords = []
+for i in range(len(data)):
+    user = data[i]
+    pwrd = sc.Passwords(
+        pwd_id = i,
+        pwd = user['password'],
+        active = True,
+        created_on = datetime.utcnow()
+    )
+    passwords.append(pwrd)
+
+addresses = []
+for i in range(len(data)):
+    user = data[i]
+    add = sc.Addresses(
+        id = i,
+        street = re.split(r'(?<=\d)(?:-\d+)?\s+',user['street'])[1],
+        street_num = re.split(r'(?<=\d)(?:-\d+)?\s+',user['street'])[0],
+        street_ext = re.split(r'(?<=\d)(?:-\d+)?\s+',user['street'])[1],
+        city = user['city'],
+        state = user['state'],
+        postal_code = user['postal_code'],
+        billing_address = user['billing_address'],
+        shipping_address = user['shipping_address']
+    )
+    addresses.append(add)
+
+print([addresses[i].street for i in range(len(addresses))])
+
+payment = []
+for i in range(len(data)):
+    user = data[i]
+    pay = sc.Payment(
+        id = i, 
+        card_num = user['card_number_1'],
+        current = True,
+        created_on = datetime.utcnow() 
+    )
+    payment.append(pay)

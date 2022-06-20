@@ -1,13 +1,12 @@
 from urllib.request import Request
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from numpy import str_
 from database import SessionLocal
 import models
 import schemas as sc
-from val import customers, products
 from sqlalchemy import and_
 from sqlalchemy.orm.exc import UnmappedInstanceError
+
 app = FastAPI()
 db = SessionLocal()
 
@@ -37,8 +36,9 @@ def get_cat(cat:str, id: int):
 # Create item and upload it to the database
 @app.post('/Products/', status_code=201)
 def create_product(prod:sc.Products):
-    # check if product_id is unique
-    if any(products[i].product_id == prod.product_id for i in range(len(products))):
+    # Check if product id is already used in the database
+    id_exists = bool(db.query(models.Products).filter(models.Products.product_id==prod.product_id).first())
+    if id_exists:
         raise HTTPException(status_code=400, detail = 'Product ID is not unique')
 
     new_prod = models.Products(**dict(prod))
@@ -90,18 +90,17 @@ def update_product(id:int, prod: sc.Products):
 # Register new user
 @app.post('/Users/Register', status_code=201)
 def register_user(user:sc.Customers):
-    # Check if email is being used already
-    if (any(customers[i].email==user.email for i in range(len(customers)))):
-        raise HTTPException(status_code=400, detail = 'Email already in use')
-
-    # Check if customer ID is unique
-    if (any(customers[i].id==user.id for i in range(len(customers)))):
-        raise HTTPException(status_code=400, detail = 'Customer ID is not unique')
-    new_user = models.Customers(**dict(user))
-
-    customers.append(user)
-    db.add(new_user)
-    db.commit()
+    # Check if the users id or email is already in the database
+    email_exists = bool(db.query(models.Customers).filter(models.Customers.email == user.email))
+    id_exists = bool(db.query(models.Customers).filter(models.Customers.id==0).first())
+    # If the user the email or id are not in use we create a new user
+    if not email_exists or not id_exists:
+        new_user = models.Customers(**dict(user))
+        #ucustomers.append(user)
+        db.add(new_user)
+        db.commit()
+    else:
+        raise HTTPException(status_code=400, detail='Customer already exists')
 
     return user
 
@@ -110,7 +109,6 @@ def register_user(user:sc.Customers):
 def delete_user(user_id:int):
     try:
         user_del = db.query(models.Customers).filter(models.Customers.id==user_id).first()
-
         db.delete(user_del)
         db.commit()
     except UnmappedInstanceError:
@@ -132,5 +130,6 @@ def update_user(user_id:int, user: sc.Customers):
 
     db.commit()
     return user_up
+
 
 

@@ -1,4 +1,3 @@
-from turtle import back
 from database import Base
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship, backref
@@ -13,8 +12,10 @@ class Customers(Base):
     email = Column(String)
     dob = Column(DateTime)
     phone = Column(String)
-    password = Column(String)
+    password = Column(Integer, ForeignKey('passwords.pwd_id'))
     created_on = Column(DateTime,default=datetime.now)
+
+    pwrd = relationship("Passwords", backref = backref('customers',order_by=id))
 
 class Passwords(Base):
     __tablename__ = 'passwords'
@@ -22,7 +23,7 @@ class Passwords(Base):
     pwd_id = Column(Integer, primary_key = True)
     customer_id = Column(Integer)
     pwd = Column(String)
-    active = Column(Boolean)
+    active = Column(Boolean, default=True)
     created_on = Column(DateTime,default=datetime.now)
 
 class Products(Base):
@@ -45,3 +46,28 @@ class Products(Base):
     cat1 = Column(String)
     cat2 = Column(String)
     cat3 = Column(String)
+
+class Payment(Base):
+    __tablename__ = "payment"
+    id = Column(Integer, primary_key = True)
+    customer_id = Column(Integer, ForeignKey("customers.id"))
+    card_num = Column(String(20))
+    current = Column(Boolean, default = True)
+    created_on = Column(DateTime, default = datetime.now)
+
+    customer = relationship("Customers", backref=backref('payment', order_by=id))
+
+class Addresses(Base):
+    __tablename__ = 'addresses'
+    id = Column(Integer, primary_key = True)
+    customer_id = Column(Integer, ForeignKey("customers.id"))
+    street = Column(String(128))
+    street_num = Column(String(32))
+    street_ext = Column(String(128))
+    city = Column(String(64))
+    state = Column(String(128))
+    postal_code = Column(String(5))
+    billing_address = Column(Boolean)
+    shipping_address = Column(Boolean)
+
+    customer = relationship("Customers", backref=backref('addresses',order_by=id))
